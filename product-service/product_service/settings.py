@@ -90,15 +90,25 @@ MONGODB_USER = config('MONGODB_USER', default='')
 MONGODB_PASSWORD = config('MONGODB_PASSWORD', default='')
 MONGODB_AUTH_SOURCE = config('MONGODB_AUTH_SOURCE', default='admin')
 
-# Connect to MongoDB
-mongoengine.connect(
-    db=MONGODB_DB,
-    host=MONGODB_HOST,
-    port=MONGODB_PORT,
-    username=MONGODB_USER if MONGODB_USER else None,
-    password=MONGODB_PASSWORD if MONGODB_PASSWORD else None,
-    authentication_source=MONGODB_AUTH_SOURCE if MONGODB_USER else None,
-)
+# Connect to MongoDB (skip in tests, will be handled by test fixtures)
+import sys
+if 'pytest' not in sys.modules and 'test' not in sys.argv:
+    mongoengine.connect(
+        db=MONGODB_DB,
+        host=MONGODB_HOST,
+        port=MONGODB_PORT,
+        username=MONGODB_USER if MONGODB_USER else None,
+        password=MONGODB_PASSWORD if MONGODB_PASSWORD else None,
+        authentication_source=MONGODB_AUTH_SOURCE if MONGODB_USER else None,
+    )
+
+# Database configuration for Django (needed for JWT token generation in tests)
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': ':memory:',  # In-memory database for tests
+    }
+}
 
 
 # Password validation
