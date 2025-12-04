@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-service-config
+  labels:
+    app: product-service
+data:
+  mongodb-host: "mongodb-service"
+  mongodb-port: "27017"
+  mongodb-db: "product_service_db"

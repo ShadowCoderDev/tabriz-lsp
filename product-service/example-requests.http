@@ -1,0 +1,85 @@
+### Product Service API Example Requests
+### Use with REST Client extension in VS Code or similar tools
+
+@baseUrl = http://localhost:8001
+@token = your-jwt-token-here
+
+### 1. List all products (public - no authentication required)
+GET {{baseUrl}}/api/products/
+
+### 2. List products with pagination (public)
+GET {{baseUrl}}/api/products/?page=1&page_size=10
+
+### 3. Filter products by category (public)
+GET {{baseUrl}}/api/products/?category=Electronics
+
+### 4. Filter products by price range (public)
+GET {{baseUrl}}/api/products/?min_price=50&max_price=200
+
+### 5. Filter products in stock (public)
+GET {{baseUrl}}/api/products/?in_stock=true
+
+### 6. Search products (public endpoint)
+GET {{baseUrl}}/api/products/search/?q=laptop
+
+### 7. Search with multiple filters
+GET {{baseUrl}}/api/products/search/?q=wireless&category=Electronics&min_price=20&max_price=100
+
+### 8. Get product by ID (public - no authentication required)
+GET {{baseUrl}}/api/products/507f1f77bcf86cd799439011/
+
+### 9. Check product stock (public endpoint)
+GET {{baseUrl}}/api/products/507f1f77bcf86cd799439011/stock/
+
+### 10. Create a new product
+POST {{baseUrl}}/api/products/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Wireless Bluetooth Headphones",
+  "description": "High-quality wireless headphones with noise cancellation",
+  "price": "99.99",
+  "stockQuantity": 50,
+  "category": "Electronics",
+  "sku": "ELEC-HEAD-001",
+  "isActive": true
+}
+
+### 11. Update product (full)
+PUT {{baseUrl}}/api/products/507f1f77bcf86cd799439011/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Updated Product Name",
+  "description": "Updated description",
+  "price": "89.99",
+  "stockQuantity": 45,
+  "category": "Electronics",
+  "sku": "ELEC-HEAD-001",
+  "isActive": true
+}
+
+### 12. Update product (partial)
+PATCH {{baseUrl}}/api/products/507f1f77bcf86cd799439011/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "price": "79.99",
+  "stockQuantity": 40
+}
+
+### 13. Delete product (soft delete)
+DELETE {{baseUrl}}/api/products/507f1f77bcf86cd799439011/
+Authorization: Bearer {{token}}
+
+### 14. Get API documentation
+GET {{baseUrl}}/api/docs/
+
+### 15. Get OpenAPI schema
+GET {{baseUrl}}/api/schema/
+
+### 16. Get Prometheus metrics
+GET {{baseUrl}}/metrics/

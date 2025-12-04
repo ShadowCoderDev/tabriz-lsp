@@ -1,0 +1,62 @@
+services:
+  # MongoDB Database Service
+  mongodb:
+    image: mongo:7.0
+    container_name: product_service_mongodb
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGODB_DB:-product_service_db}
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USER:-}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-}
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "${MONGODB_PORT:-27017}:27017"
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - product_service_network
+
+  # Django Application Service
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: product_service_web
+    command: python manage.py runserver 0.0.0.0:8001
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    environment:
+      - MONGODB_HOST=mongodb
+      - MONGODB_PORT=27017
+      - MONGODB_DB=${MONGODB_DB:-product_service_db}
+      - MONGODB_USER=${MONGODB_USER:-}
+      - MONGODB_PASSWORD=${MONGODB_PASSWORD:-}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - product_service_network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8001/api/docs/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  mongodb_data:
+    driver: local
+  static_volume:
+    driver: local
+
+networks:
+  product_service_network:
+    driver: bridge

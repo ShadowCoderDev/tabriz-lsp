@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+  labels:
+    app: product-service
+    service: product
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+        service: product
+    spec:
+      containers:
+      - name: product-service
+        image: afsari911/product-service:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8001
+          name: http
+        env:
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: product-service-secrets
+              key: secret-key
+        - name: DEBUG
+          value: "False"
+        - name: ALLOWED_HOSTS
+          value: "product-service,localhost"
+        - name: MONGODB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: product-service-config
+              key: mongodb-host
+        - name: MONGODB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: product-service-config
+              key: mongodb-port
+        - name: MONGODB_DB
+          valueFrom:
+            configMapKeyRef:
+              name: product-service-config
+              key: mongodb-db
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef:
+              name: product-service-secrets
+              key: mongodb-user
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: product-service-secrets
+              key: mongodb-password
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: product-service-secrets
+              key: jwt-secret-key
+        - name: CORS_ALLOWED_ORIGINS
+          value: "http://localhost:3000,http://localhost:8000"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/docs/
+            port: 8001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/docs/
+            port: 8001
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 2

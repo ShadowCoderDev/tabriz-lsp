@@ -1,0 +1,48 @@
+./Practical Assignment.text
+./Practical Assignment.pdf
+Practical Assignment.*
+./.vscode/
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+/static
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+help_command.text
+DOCKER_GUIDE.md
+README.md
+*.md
+grafana-dashboard.json
+
+#should be igonre the secret.yaml file??
